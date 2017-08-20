@@ -16,7 +16,7 @@ Usage
     library(simplefmi)
     library(lubridate) # for date-variables
 
-    fmi_apikey <– "api-key" # see ?fmi_download for more information.
+    fmi_apikey <- "api-key" # see ?fmi_download for more information.
 
     # get yesterday's hourly rain and temperature data from kaisaniemi
     weather <- fmi_download(fmi_apikey,

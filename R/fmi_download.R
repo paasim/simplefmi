@@ -46,7 +46,7 @@ fmi_download <- function(fmi_apikey, start, end = start,
                   str_replace("T", " ") %>%
                   as_datetime(tz = "Europe/Helsinki"),
                 var = res$V2[res$V1 == "ParameterName"],
-                val = res$V2[res$V1 == "ParameterValue"]) %>%
+                val = as.numeric(res$V2[res$V1 == "ParameterValue"])) %>%
     spread("var", "val")
 
   # if custom params are not used, colnames are known and can be simplified

@@ -42,15 +42,19 @@ fmi_download <- function(fmi_apikey, start, end = start,
   }) %>% bind_rows()
 
   # make the result tidy
+  tz <- "Europe/Helsinki"
   res <- tibble(time = res$V2[res$V1 == "Time"] %>%
-                  str_replace("T", " ") %>%
-                  as_datetime(tz = "Europe/Helsinki"),
+                  str_replace("T", " ") %>% as_datetime(tz = tz),
+                date = as_date(time, tz = tz),
                 var = res$V2[res$V1 == "ParameterName"],
                 val = as.numeric(res$V2[res$V1 == "ParameterValue"])) %>%
     spread("var", "val")
 
+  # remove the redundant variable
+  if (hourly) res$date <- NULL else res$time <- NULL
+
   # if custom params are not used, colnames are known and can be simplified
-  if (is.null(params)) res <- setNames(res, c("time", "rain", "temp"))
+  if (is.null(params)) colnames(res)[2:3] <- c("rain", "temp")
 
   res
 }

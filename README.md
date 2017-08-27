@@ -2,12 +2,12 @@
 
 [![Build Status](https://travis-ci.org/paasim/simplefmi.svg?branch=master)](https://travis-ci.org/paasim/simplefmi)
 
-A simplified version of the amazing fmi-package for downloading weather data via FMI api in a tidy format.
+A simplified version of the amazing fmi-package for downloading weather data via FMI api in a tidy format for personal use.
 
 Installation
 ------------
 
-    devtools::install_github('paasim/simplefmi)
+    devtools::install_github("paasim/simplefmi")
 
 
 Usage

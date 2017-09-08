@@ -22,8 +22,11 @@
 #' @export
 #'
 
-fmi_download <- function(fmi_apikey, start, end = start,
-                         station_id = "100971", params = NULL, hourly = FALSE) {
+fmi_download <- function(fmi_apikey,
+                         start, end = start,
+                         station_id = "100971",
+                         params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
+                         hourly = FALSE) {
 
   query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
 
@@ -45,16 +48,18 @@ fmi_download <- function(fmi_apikey, start, end = start,
   tz <- "Europe/Helsinki"
   res <- tibble(time = res$V2[res$V1 == "Time"] %>%
                   str_replace("T", " ") %>% as_datetime(tz = tz),
-                date = as_date(time, tz = tz),
                 var = res$V2[res$V1 == "ParameterName"],
                 val = as.numeric(res$V2[res$V1 == "ParameterValue"])) %>%
     spread("var", "val")
+  # convert the time to date
+  if (!hourly) {
+    res$time <- as_date(res$time, tz = tz)
+    colnames(res)[1] <- "date"
+  }
 
-  # remove the redundant variable
-  if (hourly) res$date <- NULL else res$time <- NULL
 
   # if custom params are not used, colnames are known and can be simplified
-  if (is.null(params)) colnames(res)[2:3] <- c("rain", "temp")
+  colnames(res) <- str_replace_all(colnames(res), simplify_names_list)
 
   res
 }

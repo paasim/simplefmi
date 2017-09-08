@@ -40,6 +40,13 @@ construct_query <- function(fmi_apikey, start, end, station_id, params, hourly) 
   })
 }
 
+# for simplifying the colnames
+simplify_names_list <-
+  c("t2m" = "temp", "ws_10min" = "wind", "r_1h" = "rain",
+    "snow_aws" = "snow", "vis" = "visibility",
+    "rrday" = "rain", "tday" = "temp",
+    "tmin" = "temp_min", "tmax" = "temp_max")
+
 # Try to report possible errors
 report_errors <- function(res) {
 

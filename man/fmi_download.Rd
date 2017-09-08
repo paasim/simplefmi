@@ -5,7 +5,7 @@
 \title{fmi_download}
 \usage{
 fmi_download(fmi_apikey, start, end = start, station_id = "100971",
-  params = NULL, hourly = FALSE)
+  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE)
 }
 \arguments{
 \item{fmi_apikey}{Your personal fmi-apikey.

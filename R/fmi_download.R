@@ -39,9 +39,9 @@ fmi_download <- function(fmi_apikey,
   proc_elem <- function(x) set_names(xml_text(x), xml_name(x))
   # parse the content from the xml-result
   res <- map(res_list, ~read_xml(.x) %>%
-                xml_find_all(".//BsWfs:BsWfsElement") %>%
+                xml_find_all("./wfs:member/BsWfs:BsWfsElement") %>%
                 # extract the value from each element and combine them
-                map(~xml_find_all(.x, ".//*[position()>1]") %>% # drop location
+                map(~xml_find_all(.x, "./*[position()>1]") %>% # drop location
                       proc_elem() %>% t() %>% as_tibble()) %>%
                 bind_rows()) %>%
     bind_rows() %>%

@@ -5,7 +5,8 @@
 \title{fmi_download}
 \usage{
 fmi_download(fmi_apikey, start, end = start, station_id = "100971",
-  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE)
+  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE,
+  simplify_names = TRUE)
 }
 \arguments{
 \item{fmi_apikey}{Your personal fmi-apikey.
@@ -26,10 +27,13 @@ precipitation is downloaded. See
 
 \item{hourly}{If \code{TRUE}, hourly data is downloaded. Otherwise the daily
 data is downloaded.}
+
+\item{simplify_names}{If \code{TRUE}, an attempt is made to simplify some of
+the names of the variables. For example, t2m/tday is temp etc.}
 }
 \value{
-A tibble with the following columns with the time in the first column
-  and the variables specified in \code{params} in the other columns.
+A tibble with date (& time if hourly data is requested) in the first
+  column and the variables specified in \code{params} in the other columns.
 }
 \description{
 Download data from the fmi weather API.

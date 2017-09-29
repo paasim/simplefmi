@@ -15,9 +15,11 @@
 #'   \url{http://en.ilmatieteenlaitos.fi/open-data-manual-fmi-wfs-services}.
 #' @param hourly If \code{TRUE}, hourly data is downloaded. Otherwise the daily
 #'   data is downloaded.
+#' @param simplify_names If \code{TRUE}, an attempt is made to simplify some of
+#'   the names of the variables. For example, t2m/tday is temp etc.
 #'
-#' @return A tibble with the following columns with the time in the first column
-#'   and the variables specified in \code{params} in the other columns.
+#' @return A tibble with date (& time if hourly data is requested) in the first
+#'   column and the variables specified in \code{params} in the other columns.
 #'
 #' @export
 #'
@@ -26,40 +28,41 @@ fmi_download <- function(fmi_apikey,
                          start, end = start,
                          station_id = "100971",
                          params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
-                         hourly = FALSE) {
+                         hourly = FALSE,
+                         simplify_names = TRUE) {
 
   query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
 
-  res_list <- lapply(query, curl_fetch_memory) %T>%
-    report_errors()
+  res_list <- map(query, GET) %T>% report_errors()
 
-  # extract the relevant data from the result
-  res <- lapply(res_list, function(r) {
-    rawToChar(r$content) %>%
-      str_split("\n") %>%
-      unlist() %>%
-      str_subset("Time|ParameterName|ParameterValue") %>%
-      str_replace_all("<BsWfs:|</.*>| ", "") %>%
-      str_split(">", simplify = TRUE) %>%
-      as_tibble()
-  }) %>% bind_rows()
+  proc_elem <- function(x) set_names(xml_text(x), xml_name(x))
+  # extract the relevant data from the result,
+  # contents of contents to extract from wfs:member
 
-  # make the result tidy
-  tz <- "Europe/Helsinki"
-  res <- tibble(time = res$V2[res$V1 == "Time"] %>%
-                  str_replace("T", " ") %>% as_datetime(tz = tz),
-                var = res$V2[res$V1 == "ParameterName"],
-                val = as.numeric(res$V2[res$V1 == "ParameterValue"])) %>%
-    spread("var", "val")
-  # convert the time to date
-  if (!hourly) {
-    res$time <- as_date(res$time, tz = tz)
-    colnames(res)[1] <- "date"
+  # parse the content from the xml-result
+  res <- map(res_list, ~read_xml(.x) %>%
+                xml_contents() %>%
+                xml_contents() %>%
+                # extract the value from each element and combine them
+                map(~xml_contents(.x) %>% proc_elem() %>% t() %>% as_tibble()) %>%
+                bind_rows()) %>%
+    bind_rows() %>%
+    select(-1, date = .data$Time) %>% # drop location, rename time
+    mutate(date = str_replace(.data$date, "T", " ") %>% as_datetime(),
+           ParameterValue = as.numeric(.data$ParameterValue)) %>%
+    spread("ParameterName", "ParameterValue")
+
+  # remove time information
+  if (!hourly) res$date <- as_date(res$date)
+
+  if (simplify_names) {
+    simplify_names_list <- set_names(
+      c("temp", "wind", "rain", "snow", "visibility",
+        "rain", "temp", "temp_min", "temp_max"),
+      c("t2m", "ws_10min", "r_1h", "snow_aws", "vis",
+        "rrday", "tday", "tmin", "tmax"))
+    colnames(res) <- str_replace_all(colnames(res), simplify_names_list)
   }
-
-
-  # if custom params are not used, colnames are known and can be simplified
-  colnames(res) <- str_replace_all(colnames(res), simplify_names_list)
 
   res
 }

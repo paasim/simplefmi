@@ -18,8 +18,8 @@ lubridate::as_datetime().}
 \item{end}{End time as a POSIXt-object. Defaults to \code{start}.}
 
 \item{station_id}{The weather station id. Defaults to \code{100971}
-(Kaisaniemi weather station). See
-\url{http://en.ilmatieteenlaitos.fi/observation-stations}.}
+(Kaisaniemi weather station). The available stations can be downloaded
+with the \link{get_stations}-function.}
 
 \item{params}{Query parameters. If not provided, temprature and
 precipitation is downloaded. See

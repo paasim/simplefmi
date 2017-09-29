@@ -8,8 +8,8 @@
 #'   lubridate::as_datetime().
 #' @param end End time as a POSIXt-object. Defaults to \code{start}.
 #' @param station_id The weather station id. Defaults to \code{100971}
-#'   (Kaisaniemi weather station). See
-#'   \url{http://en.ilmatieteenlaitos.fi/observation-stations}.
+#'   (Kaisaniemi weather station). The available stations can be downloaded
+#'   with the \link{get_stations}-function.
 #' @param params Query parameters. If not provided, temprature and
 #'   precipitation is downloaded. See
 #'   \url{http://en.ilmatieteenlaitos.fi/open-data-manual-fmi-wfs-services}.
@@ -25,7 +25,8 @@
 #'
 
 fmi_download <- function(fmi_apikey,
-                         start, end = start,
+                         start,
+                         end = start,
                          station_id = "100971",
                          params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
                          hourly = FALSE,
@@ -36,18 +37,15 @@ fmi_download <- function(fmi_apikey,
   res_list <- map(query, GET) %T>% report_errors()
 
   proc_elem <- function(x) set_names(xml_text(x), xml_name(x))
-  # extract the relevant data from the result,
-  # contents of contents to extract from wfs:member
-
   # parse the content from the xml-result
   res <- map(res_list, ~read_xml(.x) %>%
-                xml_contents() %>%
-                xml_contents() %>%
+                xml_find_all(".//BsWfs:BsWfsElement") %>%
                 # extract the value from each element and combine them
-                map(~xml_contents(.x) %>% proc_elem() %>% t() %>% as_tibble()) %>%
+                map(~xml_find_all(.x, ".//*[position()>1]") %>% # drop location
+                      proc_elem() %>% t() %>% as_tibble()) %>%
                 bind_rows()) %>%
     bind_rows() %>%
-    select(-1, date = .data$Time) %>% # drop location, rename time
+    rename(date = .data$Time) %>% # rename time
     mutate(date = str_replace(.data$date, "T", " ") %>% as_datetime(),
            ParameterValue = as.numeric(.data$ParameterValue)) %>%
     spread("ParameterName", "ParameterValue")

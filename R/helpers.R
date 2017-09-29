@@ -9,7 +9,7 @@ construct_query <- function(fmi_apikey, start, end, station_id, params, hourly) 
 
     # split the request into smaller queries:
     n_periods <- ((start %--% end) / weeks(1)) %>% floor() + 1
-    starts <- (start + weeks(1:n_periods - 1)) %>% as.list()
+    starts <- (start + weeks(1:n_periods - 1))
     ends <- start + weeks(1:n_periods) - dhours(1)
     ends[length(ends)] <- min(ends[length(ends)], end)
 
@@ -22,7 +22,6 @@ construct_query <- function(fmi_apikey, start, end, station_id, params, hourly) 
     starts <- start + years(1:n_periods - 1)
     ends <- start + years(1:n_periods) - ddays(1)
     ends[length(ends)] <- min(ends[length(ends)], end)
-
   }
 
   form <- function(d) format(d, "%Y-%m-%dT%H:%M:%SZ")
@@ -36,16 +35,12 @@ construct_query <- function(fmi_apikey, start, end, station_id, params, hourly) 
            ~str_c(url_nodate, "&starttime=", .x, "&endtime=", .y))
 }
 
-# Try to report possible errors
 report_errors <- function(res_list) {
 
   errors <- map_lgl(res_list, http_error)
-  # status_codes <- vapply(res, function(x) x$status_code, integer(1))
-  # errors <- which(status_codes != 200)
   if (any(errors)) {
     str_c("\nQuery returned with error(s), see the first one below:\n",
           res_list %>% pluck(which(errors)[1], "content") %>% rawToChar()) %>%
       stop()
   }
-
 }

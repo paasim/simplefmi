@@ -6,5 +6,5 @@
 \alias{simplefmi-package}
 \title{SIMPLEFMI}
 \description{
-Simplified version of the amazing fmi-package for personal use.
+An R package for downloading weather data from the FMI API.
 }

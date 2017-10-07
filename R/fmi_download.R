@@ -34,33 +34,14 @@ fmi_download <- function(fmi_apikey,
 
   query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
 
-  res_list <- map(query, GET) %T>% report_errors()
-
-  proc_elem <- function(x) set_names(xml_text(x), xml_name(x))
-  # parse the content from the xml-result
-  res <- map(res_list, ~read_xml(.x) %>%
-                xml_find_all("./wfs:member/BsWfs:BsWfsElement") %>%
-                # extract the value from each element and combine them
-                map(~xml_find_all(.x, "./*[position()>1]") %>% # drop location
-                      proc_elem() %>% t() %>% as_tibble()) %>%
-                bind_rows()) %>%
-    bind_rows() %>%
-    rename(date = .data$Time) %>% # rename time
-    mutate(date = str_replace(.data$date, "T", " ") %>% as_datetime(),
-           ParameterValue = as.numeric(.data$ParameterValue)) %>%
-    spread("ParameterName", "ParameterValue")
+  res <- map(query, GET) %T>% report_errors()
+  res_content <- map(res, "content") %>%
+    map_df(process_content)
 
   # remove time information
-  if (!hourly) res$date <- as_date(res$date)
+  if (!hourly) res_content$date <- as_date(res_content$date)
 
-  if (simplify_names) {
-    simplify_names_list <- set_names(
-      c("temp", "wind", "rain", "snow", "visibility",
-        "rain", "temp", "temp_min", "temp_max"),
-      c("t2m", "ws_10min", "r_1h", "snow_aws", "vis",
-        "rrday", "tday", "tmin", "tmax"))
-    colnames(res) <- str_replace_all(colnames(res), simplify_names_list)
-  }
+  if (simplify_names) res_content <- simplify_colnames(res_content)
 
-  res
+  res_content
 }

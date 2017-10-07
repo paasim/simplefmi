@@ -18,8 +18,8 @@ lubridate::as_datetime().}
 \item{end}{End time as a POSIXt-object. Defaults to \code{start}.}
 
 \item{station_id}{The weather station id. Defaults to \code{100971}
-(Kaisaniemi weather station). The available stations can be downloaded
-with the \link{get_stations}-function.}
+(Kaisaniemi weather station). A list of the available stations can be
+downloaded with the \link{get_stations}-function.}
 
 \item{params}{Query parameters. If not provided, temprature and
 precipitation is downloaded. See
@@ -33,7 +33,7 @@ the names of the variables. For example, t2m/tday is temp etc.}
 }
 \value{
 A tibble with date (& time if hourly data is requested) in the first
-  column and the variables specified in \code{params} in the other columns.
+ column and the variables specified in \code{params} in the other columns.
 }
 \description{
 Download data from the fmi weather API.

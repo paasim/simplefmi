@@ -44,7 +44,7 @@ process_content <- function(raw_content) {
   get <- function(x) xml_find_all(nodes, str_c("./BsWfs:", x)) %>% xml_text()
   tibble(date = get("Time") %>% str_replace("T", " ") %>% as_datetime(),
          key = get("ParameterName"),
-         value = get("ParameterValue") %>% parse_number()) %>%
+         value = get("ParameterValue") %>% parse_number(c("", "NA", "NaN"))) %>%
     spread("key", "value")
 }
 

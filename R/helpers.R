@@ -66,3 +66,8 @@ report_errors <- function(res_list) {
       stop()
   }
 }
+
+.onAttach <- function(...) {
+  ver <- utils::packageVersion("simplefmi")
+  packageStartupMessage("This is simplefmi version ", ver)
+}

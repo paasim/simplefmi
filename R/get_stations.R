@@ -14,7 +14,7 @@ get_stations <- function() {
     html_table() %>%
     pluck(1) %>% # there is only one html table on the page
     as_tibble() %>%
-    filter(.data$Groups == "Weather stations") %>% # only weather stations
+    filter(.data$Groups == "Weather") %>% # only weather stations
     select(name = .data$Name, station_id = .data$FMISID,
            lat = .data$Lat, lon = .data$Lon) %>%
     mutate(station_id = as.character(.data$station_id))

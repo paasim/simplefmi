@@ -6,11 +6,11 @@
 #' @name simplefmi
 #'
 #' @importFrom dplyr bind_rows filter mutate rename select
-#' @importFrom httr GET http_error
+#' @importFrom httr content GET http_error
 #' @importFrom lubridate "%--%" as_date as_datetime days hours weeks years
 #'  today ymd_hms
 #' @importFrom magrittr "%>%" "%T>%"
-#' @importFrom purrr map map_df map_lgl map2_chr pluck set_names
+#' @importFrom purrr keep map map_df map_lgl map2_chr pluck set_names
 #' @importFrom readr parse_number
 #' @importFrom rlang .data
 #' @importFrom rvest html_table

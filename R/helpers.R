@@ -36,9 +36,10 @@ construct_query <- function(fmi_apikey, start, end, station_id, params, hourly) 
 
 fmi_date_form <- function(d) format(d, "%Y-%m-%dT%H:%M:%SZ")
 
-process_content <- function(raw_content) {
+process_content <- function(res) {
 
-  nodes <- read_xml(raw_content) %>%
+  nodes <- content(res, "text", "text/xml", "UTF-8") %>%
+    read_xml() %>%
     xml_find_all("./wfs:member/BsWfs:BsWfsElement")
 
   get <- function(x) xml_find_all(nodes, str_c("./BsWfs:", x)) %>% xml_text()
@@ -59,10 +60,10 @@ simplify_colnames <- function(res) {
 
 report_errors <- function(res_list) {
 
-  errors <- map_lgl(res_list, http_error)
-  if (any(errors)) {
+  errors <- keep(res_list, http_error)
+  if (length(errors) > 0L) {
     str_c("\nQuery returned with error(s), see the first one below:\n",
-          res_list %>% pluck(which(errors)[1], "content") %>% rawToChar()) %>%
+          content(errors[[1]], "text", "text/xml", "UTF-8")) %>%
       stop()
   }
 }

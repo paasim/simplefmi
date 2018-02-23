@@ -35,8 +35,7 @@ fmi_download <- function(fmi_apikey,
   query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
 
   res <- map(query, GET) %T>% report_errors()
-  res_content <- map(res, "content") %>%
-    map_df(process_content)
+  res_content <- map_df(res, process_content)
 
   # remove time information
   if (!hourly) res_content$date <- as_date(res_content$date)

@@ -10,6 +10,7 @@
 
 get_stations <- function() {
   GET("http://en.ilmatieteenlaitos.fi/observation-stations") %>%
+    content("text", "text/html", "UTF-8") %>%
     read_html() %>%
     html_table() %>%
     pluck(1) %>% # there is only one html table on the page

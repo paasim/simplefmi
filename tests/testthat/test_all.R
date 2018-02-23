@@ -76,12 +76,12 @@ test_that("process_content seems to work as expected", {
   expect_true("tbl_df" %in% class(df1))
   expect_equal(nrow(df1), 24)
   expect_equal(ncol(df1), 3)
-  expect_equal(mean(df1$t2m), 7.975)
-  expect_equal(median(df1$date), ymd_hms("2017-10-06 11:30:00 UTC"))
+  expect_equal(round(mean(df1$t2m)), -12L)
+  expect_equal(median(df1$date), ymd_hms("2018-02-22 11:30:00 UTC"))
 
 })
 
-test_that("process_content seems to work as expected", {
+test_that("simplify_colnames seems to work as expected", {
   tb1 <- simplify_colnames(tibble(t2m = 1, vis = 2))
   tb2 <- tibble(temp = 1, visibility = 2)
   expect_identical(tb1, tb2)

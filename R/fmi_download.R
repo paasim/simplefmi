@@ -2,8 +2,6 @@
 #'
 #' Download data from the fmi weather API.
 #'
-#' @param fmi_apikey Your personal fmi-apikey.
-#'  See \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
 #' @param start Start time as a POSIXt-object obtained with e.g.
 #'  lubridate::as_datetime().
 #' @param end End time as a POSIXt-object. Defaults to \code{start}.
@@ -17,6 +15,8 @@
 #'  data is downloaded.
 #' @param simplify_names If \code{TRUE}, an attempt is made to simplify some of
 #'  the names of the variables. For example, t2m/tday is temp etc.
+#' @param fmi_apikey An optional fmi-apikey.
+#'  See \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
 #'
 #' @return A tibble with date (& time if hourly data is requested) in the first
 #'  column and the variables specified in \code{params} in the other columns.
@@ -24,13 +24,13 @@
 #' @export
 #'
 
-fmi_download <- function(fmi_apikey,
-                         start,
+fmi_download <- function(start,
                          end = start,
                          station_id = "100971",
                          params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
                          hourly = FALSE,
-                         simplify_names = TRUE) {
+                         simplify_names = TRUE,
+                         fmi_apikey = NA_character_) {
 
   query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
 

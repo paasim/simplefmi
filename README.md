@@ -17,12 +17,10 @@ Usage
     library(simplefmi)
     library(lubridate) # for date-variables
 
-    fmi_apikey <- "api-key" # see ?fmi_download for more information.
-
     # get yesterday's hourly rain and temperature data from kaisaniemi
-    weather <- fmi_download(fmi_apikey,
-                   start = floor_date(today() - hours(1), "days"),
-                   end = today() - hours(1),
-                   hourly = TRUE)
+    yesterday <- today() - days(1)
+    yesterday_0 <- ymd_hms(stringr::str_c(yesterday, " 00:00:00"))
+    yesterday_23 <- ymd_hms(stringr::str_c(yesterday, " 23:00:00"))
+    weather <- fmi_download(yesterday_0, yesterday_23, hourly = TRUE)
 
 

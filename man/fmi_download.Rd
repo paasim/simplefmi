@@ -4,14 +4,11 @@
 \alias{fmi_download}
 \title{fmi_download}
 \usage{
-fmi_download(fmi_apikey, start, end = start, station_id = "100971",
+fmi_download(start, end = start, station_id = "100971",
   params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE,
-  simplify_names = TRUE)
+  simplify_names = TRUE, fmi_apikey = NA_character_)
 }
 \arguments{
-\item{fmi_apikey}{Your personal fmi-apikey.
-See \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.}
-
 \item{start}{Start time as a POSIXt-object obtained with e.g.
 lubridate::as_datetime().}
 
@@ -30,6 +27,9 @@ data is downloaded.}
 
 \item{simplify_names}{If \code{TRUE}, an attempt is made to simplify some of
 the names of the variables. For example, t2m/tday is temp etc.}
+
+\item{fmi_apikey}{An optional fmi-apikey.
+See \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.}
 }
 \value{
 A tibble with date (& time if hourly data is requested) in the first

@@ -2,32 +2,32 @@
 construct_query <- function(apikey, start, end, station_id, params, hourly) {
 
   if (hourly) {
-    q_id <- "fmi::observations::weather::simple"
+    query_id <- "fmi::observations::weather::simple"
     timestep <- 60
     # possible values:  t2m, ws_10min, wg_10min, wd_10min, rh, td,
     # of params         r_1h, ri_10min, snow_aws, p_sea, vis
   } else {
-    q_id <- "fmi::observations::weather::daily::simple"
+    query_id <- "fmi::observations::weather::daily::simple"
     timestep <- 1440
     # possible values of params : rrday, tday, snow, tmin, tmax, TG_PT12H_min
   }
 
-  df_times <- mk_time_seq(start, end, hourly) %>% map(fmi_date_form)
+  times <- mk_time_seq(start, end, hourly) %>% map(fmi_date_form)
 
-  url_base <- if (is.na(apikey)) {
-    "http://opendata.fmi.fi/"
+  url <- if (is.na(apikey)) {
+    "http://opendata.fmi.fi"
   } else {
-    str_c("http://data.fmi.fi/fmi-apikey/", apikey, "/")
+    str_c("http://data.fmi.fi/fmi-apikey/", apikey)
   }
 
-  url_nodate <- str_c(url_base,
-                      "wfs?request=getFeature&storedquery_id=", q_id,
-                      "&timestep=", timestep,
-                      "&parameters=", params,
-                      "&fmisid=", station_id)
+  url_nodate <- glue("{url}/wfs?request=getFeature",
+                     "&storedquery_id={q}", "&timestep={t}",
+                     "&parameters={p}", "&fmisid={s}",
+                     url = url, q = query_id, t = timestep,
+                     p = params, s = station_id)
 
-  map2_chr(df_times$start, df_times$end,
-           ~str_c(url_nodate, "&starttime=", .x, "&endtime=", .y))
+  map2_chr(times$start, times$end,
+           ~glue(url_nodate, "&starttime={.x}&endtime={.y}"))
 }
 
 mk_time_seq <- function(start, end, hourly) {
@@ -66,12 +66,23 @@ process_content <- function(res) {
 }
 
 simplify_colnames <- function(res) {
-  simplify_names_list <- set_names(
-    c("temp", "wind", "rain", "snow", "visibility",
-      "rain", "temp", "temp_min", "temp_max"),
-    c("t2m", "ws_10min", "r_1h", "snow_aws", "vis",
-      "rrday", "tday", "tmin", "tmax"))
-  set_names(res, str_replace_all(colnames(res), simplify_names_list))
+  name_map <- c("temp" = "t2m",
+                 "wind_speed" = "ws_10min",
+                "wg_10min" = "wind_gust",
+                "wd_10min" = "wind_dir",
+                "rh" = "humidity",
+                "dew_point" = "td",
+                "rain" = "r_1h",
+                "snow" = "snow_aws",
+                "air_pressure" = "p_sea",
+                "visibility" = "vis",
+                "rain" = "rrday",
+                "temp" = "tday",
+                "temp_min" = "tmin",
+                "temp_max" = "tmax",
+                "temp_ground" = "TG_PT12H_min")
+  rnm <- name_map[name_map %in% colnames(res)]
+  rename(res, !!!rnm)
 }
 
 report_errors <- function(res_list) {
@@ -80,7 +91,7 @@ report_errors <- function(res_list) {
   if (length(errors) > 0L) {
     str_c("\nQuery returned with error(s), see the first one below:\n",
           content(errors[[1]], "text", "text/xml", "UTF-8")) %>%
-      stop()
+      stop(call. = FALSE)
   }
 }
 

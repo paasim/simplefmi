@@ -11,5 +11,5 @@ A tibble with the station name, id, latitude and longitude.
 }
 \description{
 Download the available weather stations from
- \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
+\url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
 }

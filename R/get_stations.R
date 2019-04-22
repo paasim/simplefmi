@@ -1,7 +1,7 @@
 #' get_stations
 #'
 #' Download the available weather stations from
-#'  \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
+#'  <http://en.ilmatieteenlaitos.fi/open-data-manual>.
 #'
 #' @return A tibble with the station name, id, latitude and longitude.
 #'

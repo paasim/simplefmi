@@ -6,7 +6,7 @@
 \usage{
 fmi_download(start, end = start, station_id = "100971",
   params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE,
-  simplify_names = TRUE, fmi_apikey = NA_character_)
+  simplify_names = TRUE, verbose = FALSE, fmi_apikey = NA_character_)
 }
 \arguments{
 \item{start}{Start time as a POSIXt-object obtained with e.g.
@@ -14,27 +14,57 @@ lubridate::as_datetime().}
 
 \item{end}{End time as a POSIXt-object. Defaults to \code{start}.}
 
-\item{station_id}{The weather station id. Defaults to \code{100971}
+\item{station_id}{The weather station id. Defaults to \code{100971}.
 (Kaisaniemi weather station). A list of the available stations can be
-downloaded with the \link{get_stations}-function.}
+downloaded with the \code{\link[=get_stations]{get_stations()}}-function.}
 
-\item{params}{Query parameters. If not provided, temprature and
-precipitation is downloaded. See
-\url{http://en.ilmatieteenlaitos.fi/open-data-manual-fmi-wfs-services}.}
+\item{params}{Query parameters, a comma separated string, such as
+\code{"tday,rrday"}. For more options, see Details.}
 
 \item{hourly}{If \code{TRUE}, hourly data is downloaded. Otherwise the daily
 data is downloaded.}
 
-\item{simplify_names}{If \code{TRUE}, an attempt is made to simplify some of
-the names of the variables. For example, t2m/tday is temp etc.}
+\item{simplify_names}{If \code{TRUE}, variable names are simplified (eg. \code{t2m} is
+converted to \code{temp}).}
+
+\item{verbose}{If \code{TRUE}, prints the progress. Defaults to \code{FALSE}.}
 
 \item{fmi_apikey}{An optional fmi-apikey.
 See \url{http://en.ilmatieteenlaitos.fi/open-data-manual}.}
 }
 \value{
 A tibble with date (& time if hourly data is requested) in the first
- column and the variables specified in \code{params} in the other columns.
+column and the variables specified in \code{params} in the other columns.
 }
 \description{
-Download data from the fmi weather API.
+Download data from the fmi weather API. If the request is larger than the
+api allows, it is split into multiple parts. If this results to more than
+30 queries, a warning message is printed.
+}
+\details{
+The available variables are listed below, more information can be found from
+\url{https://en.ilmatieteenlaitos.fi/open-data-manual}.
+
+The following variables are available for hourly data:
+\itemize{
+\item \code{t2m}: temperature
+\item \code{ws_10min}: wind speed
+\item \code{wg_10min}: gust speed
+\item \code{wd_10min}: wind direction
+\item \code{rh}: humidity
+\item \code{td}: dew point
+\item \code{r_1h}: rain
+\item \code{snow_aws}: snow
+\item \code{p_sea}: air pressure
+\item \code{vis}: visibility
+}
+
+The following variables are available for daily data:
+\itemize{
+\item \code{rrday}: rain
+\item \code{tday}: temperature
+\item \code{tmin}: temperature (min)
+\item \code{tmax}: temperature (max)
+\item \code{TG_PT12H_min}: minmum ground temperature
+}
 }

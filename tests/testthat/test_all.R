@@ -116,8 +116,6 @@ test_that("construct_query works for multi-req hourly data", {
   }
 })
 
-# test_that("a simple api-call works", {
-# })
 test_that("process_content seems to work as expected", {
   yesterday <- today() - days(1)
   start <- str_c(yesterday, " 00:00:00")
@@ -132,7 +130,7 @@ test_that("process_content seems to work as expected", {
 })
 
 test_that("simplify_colnames seems to work as expected", {
-  tb1 <- simplify_colnames(tibble(t2m = 1, vis = 2))
+  tb1 <- simplify_colnames(tibble(tday = 1, vis = 2))
   tb2 <- tibble(temp = 1, visibility = 2)
   expect_identical(tb1, tb2)
 })

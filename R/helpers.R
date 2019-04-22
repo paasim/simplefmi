@@ -67,10 +67,10 @@ process_content <- function(res) {
 
 simplify_colnames <- function(res) {
   name_map <- c("temp" = "t2m",
-                 "wind_speed" = "ws_10min",
-                "wg_10min" = "wind_gust",
-                "wd_10min" = "wind_dir",
-                "rh" = "humidity",
+                "wind_speed" = "ws_10min",
+                "wind_gust" = "wg_10min",
+                "wind_dir" = "wd_10min",
+                "humidity" = "rh",
                 "dew_point" = "td",
                 "rain" = "r_1h",
                 "snow" = "snow_aws",

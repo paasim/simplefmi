@@ -57,7 +57,7 @@ fmi_download <- function(start,
 
   queries <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
   if (length(queries) >= 30) {
-    warn <- glue("Note that the request is split into",
+    warn <- glue("Note that the request is split into ",
                  "{length(queries)} parts due to fmi api limits.")
     warning(warn, call. = FALSE, immediate. = TRUE)
   }

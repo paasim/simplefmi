@@ -8,7 +8,7 @@ test_that("get_stations returns correctly named columns and positive number of r
   df_stations <- get_stations()
   expect_true("tbl_df" %in% class(df_stations))
   expect_true(nrow(df_stations) > 0)
-  expect_identical(colnames(df_stations), c("name", "station_id", "lat", "lon"))
+  expect_true(all(c("name", "station_id", "lat", "lon") %in% colnames(df_stations)))
 })
 
 context("fmi_download")

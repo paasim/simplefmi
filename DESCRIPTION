@@ -1,7 +1,7 @@
 Package: simplefmi
 Type: Package
 Title: An R package for FMI weather data
-Version: 1.0.0
+Version: 1.1.0
 Author: Markus Paasiniemi [aut]
 Maintainer: Markus Paasiniemi <paasim@iki.fi>
 Description: An R package for downloading weather data from the FMI API.
@@ -12,6 +12,7 @@ Imports:
     dplyr,
     glue,
     httr,
+    jsonlite,
     lubridate,
     magrittr,
     purrr (>= 0.3.0),

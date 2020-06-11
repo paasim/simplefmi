@@ -8,6 +8,7 @@
 #' @importFrom dplyr bind_rows filter mutate rename select
 #' @importFrom glue glue
 #' @importFrom httr content GET http_error
+#' @importFrom jsonlite fromJSON
 #' @importFrom lubridate as_date as_datetime days hours weeks years
 #'  today ymd_hms
 #' @importFrom magrittr %>%

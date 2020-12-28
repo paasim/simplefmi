@@ -1,6 +1,6 @@
 # simplefmi
 
-[![Build Status](https://travis-ci.org/paasim/simplefmi.svg?branch=master)](https://travis-ci.org/paasim/simplefmi)
+[![R build status](https://github.com/paasim/simplefmi/workflows/R-CMD-check/badge.svg)](https://github.com/paasim/simplefmi/actions)
 [![codecov](https://codecov.io/gh/paasim/simplefmi/branch/master/graphs/badge.svg)](https://codecov.io/gh/paasim/simplefmi)
 
 An R package for downloading weather data from the [FMI API](http://en.ilmatieteenlaitos.fi/open-data-manual) in a tidy format for personal use. Inspired by the [fmi](https://github.com/rOpenGov/fmi)-package, but with a lot less functionality.

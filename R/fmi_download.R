@@ -12,6 +12,7 @@
 #' * `ws_10min`: wind speed
 #' * `wg_10min`: gust speed
 #' * `wd_10min`: wind direction
+#' * `TotalCloudCover`: cloud cover
 #' * `rh`: humidity
 #' * `td`: dew point
 #' * `r_1h`: rain

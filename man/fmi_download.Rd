@@ -4,9 +4,16 @@
 \alias{fmi_download}
 \title{fmi_download}
 \usage{
-fmi_download(start, end = start, station_id = "100971",
-  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"), hourly = FALSE,
-  simplify_names = TRUE, verbose = FALSE, fmi_apikey = NA_character_)
+fmi_download(
+  start,
+  end = start,
+  station_id = "100971",
+  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
+  hourly = FALSE,
+  simplify_names = TRUE,
+  verbose = FALSE,
+  fmi_apikey = NA_character_
+)
 }
 \arguments{
 \item{start}{Start time as a POSIXt-object obtained with e.g.
@@ -51,6 +58,7 @@ The following variables are available for hourly data:
 \item \code{ws_10min}: wind speed
 \item \code{wg_10min}: gust speed
 \item \code{wd_10min}: wind direction
+\item \code{TotalCloudCover}: cloud cover
 \item \code{rh}: humidity
 \item \code{td}: dew point
 \item \code{r_1h}: rain

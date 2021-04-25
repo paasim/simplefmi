@@ -3,7 +3,6 @@
 \docType{package}
 \name{simplefmi}
 \alias{simplefmi}
-\alias{simplefmi-package}
 \title{SIMPLEFMI}
 \description{
 An R package for downloading weather data from the FMI API.

@@ -67,6 +67,7 @@ process_content <- function(res) {
 
 simplify_colnames <- function(res) {
   name_map <- c("temp" = "t2m",
+                "cloud_cover" = "TotalCloudCover",
                 "wind_speed" = "ws_10min",
                 "wind_gust" = "wg_10min",
                 "wind_dir" = "wd_10min",

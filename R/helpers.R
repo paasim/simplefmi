@@ -4,8 +4,8 @@ construct_query <- function(apikey, start, end, station_id, params, hourly) {
   if (hourly) {
     query_id <- "fmi::observations::weather::simple"
     timestep <- 60
-    # possible values:  t2m, ws_10min, wg_10min, wd_10min, rh, td,
-    # of params         r_1h, ri_10min, snow_aws, p_sea, vis
+    # possible values:  t2m, ws_10min, wg_10min, wd_10min, n_man,
+    # of params         rh, td, r_1h, ri_10min, snow_aws, p_sea, vis, wawa
   } else {
     query_id <- "fmi::observations::weather::daily::simple"
     timestep <- 1440
@@ -68,12 +68,14 @@ process_content <- function(res) {
 simplify_colnames <- function(res) {
   name_map <- c("temp" = "t2m",
                 "cloud_cover" = "TotalCloudCover",
+                "cloud_cover" = "n_man",
                 "wind_speed" = "ws_10min",
                 "wind_gust" = "wg_10min",
                 "wind_dir" = "wd_10min",
                 "humidity" = "rh",
                 "dew_point" = "td",
                 "rain" = "r_1h",
+                "rain_intensity" = "ri_10min",
                 "snow" = "snow_aws",
                 "air_pressure" = "p_sea",
                 "visibility" = "vis",
@@ -81,7 +83,8 @@ simplify_colnames <- function(res) {
                 "temp" = "tday",
                 "temp_min" = "tmin",
                 "temp_max" = "tmax",
-                "temp_ground" = "TG_PT12H_min")
+                "temp_ground" = "TG_PT12H_min",
+                "weather_code" = "wawa")
   rnm <- name_map[name_map %in% colnames(res)]
   rename(res, !!!rnm)
 }

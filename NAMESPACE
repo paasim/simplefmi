@@ -2,7 +2,9 @@
 
 export(fmi_download)
 export(get_stations)
+export(weather_code_map)
 importFrom(dplyr,bind_rows)
+importFrom(dplyr,case_when)
 importFrom(dplyr,filter)
 importFrom(dplyr,mutate)
 importFrom(dplyr,rename)

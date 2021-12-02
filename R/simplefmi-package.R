@@ -5,7 +5,7 @@
 #' @docType package
 #' @name simplefmi
 #'
-#' @importFrom dplyr bind_rows filter mutate rename select
+#' @importFrom dplyr bind_rows case_when filter mutate rename select
 #' @importFrom glue glue
 #' @importFrom httr content GET http_error
 #' @importFrom jsonlite fromJSON

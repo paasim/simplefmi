@@ -58,19 +58,22 @@ The following variables are available for hourly data:
 \item \code{ws_10min}: wind speed
 \item \code{wg_10min}: gust speed
 \item \code{wd_10min}: wind direction
-\item \code{TotalCloudCover}: cloud cover
-\item \code{rh}: humidity
+\item \code{n_man}: cloud cover
+\item \code{rh}: relative humidity
 \item \code{td}: dew point
-\item \code{r_1h}: rain
-\item \code{snow_aws}: snow
+\item \code{r_1h}: rain amount
+\item \code{ri_10min}: rain intensity
+\item \code{snow_aws}: snow depth
 \item \code{p_sea}: air pressure
 \item \code{vis}: visibility
+\item \code{wawa}: Weather code
 }
 
 The following variables are available for daily data:
 \itemize{
 \item \code{rrday}: rain
 \item \code{tday}: temperature
+\item \code{snow}: snow depth
 \item \code{tmin}: temperature (min)
 \item \code{tmax}: temperature (max)
 \item \code{TG_PT12H_min}: minmum ground temperature

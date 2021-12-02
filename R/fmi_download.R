@@ -12,17 +12,20 @@
 #' * `ws_10min`: wind speed
 #' * `wg_10min`: gust speed
 #' * `wd_10min`: wind direction
-#' * `TotalCloudCover`: cloud cover
-#' * `rh`: humidity
+#' * `n_man`: cloud cover
+#' * `rh`: relative humidity
 #' * `td`: dew point
-#' * `r_1h`: rain
-#' * `snow_aws`: snow
+#' * `r_1h`: rain amount
+#' * `ri_10min`: rain intensity
+#' * `snow_aws`: snow depth
 #' * `p_sea`: air pressure
 #' * `vis`: visibility
+#' * `wawa`: Weather code
 #'
 #' The following variables are available for daily data:
 #' * `rrday`: rain
 #' * `tday`: temperature
+#' * `snow`: snow depth
 #' * `tmin`: temperature (min)
 #' * `tmax`: temperature (max)
 #' * `TG_PT12H_min`: minmum ground temperature

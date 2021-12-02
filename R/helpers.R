@@ -1,15 +1,25 @@
-# Construct the query needed for downloading the data
-construct_query <- function(apikey, start, end, station_id, params, hourly) {
+#fmi Construct the query needed for downloading the data
+construct_query <- function(apikey, start, end, station_id, params, hourly, type = "weather") {
 
-  if (hourly) {
+  if (hourly & type == "weather") {
     query_id <- "fmi::observations::weather::simple"
     timestep <- 60
-    # possible values:  t2m, ws_10min, wg_10min, wd_10min, n_man,
-    # of params         rh, td, r_1h, ri_10min, snow_aws, p_sea, vis, wawa
-  } else {
+    # possible values  t2m, ws_10min, wg_10min, wd_10min, n_man,
+    # of params:       rh, td, r_1h, ri_10min, snow_aws, p_sea, vis, wawa
+  } else if (type == "weather") {
     query_id <- "fmi::observations::weather::daily::simple"
     timestep <- 1440
-    # possible values of params : rrday, tday, snow, tmin, tmax, TG_PT12H_min
+    # possible values of params: rrday, tday, snow, tmin, tmax, tg_pt13h_min
+  } else if (hourly & type == "airquality") {
+    query_id <- "urban::observations::airquality::hourly::simple"
+    timestep <- 60
+    # possible values  so2_pt1h_avg, no_pt1h_avg, no2_pt1h_avg, o3_pt1h_avg,
+    # of params:       trsc_pt1h_avg, co_pt1h_avg, pm10_pt1h_avg, pm25_pt1h_avg,
+    #                  qbcpm25_pt1h_avg, aqindex_pt1h_avg
+  } else if (type == "airquality") {
+    stop("only hourly air quality data available.")
+  } else {
+    stop(glue("unknown type '{type}'"))
   }
 
   times <- mk_time_seq(start, end, hourly) %>% map(fmi_date_form)
@@ -83,8 +93,19 @@ simplify_colnames <- function(res) {
                 "temp" = "tday",
                 "temp_min" = "tmin",
                 "temp_max" = "tmax",
-                "temp_ground" = "TG_PT12H_min",
-                "weather_code" = "wawa")
+                "temp_ground" = "tg_pt12h_min",
+                "weather_code" = "wawa",
+
+                "aqindex_pt1h_avg" = "airquality",
+                "co_pt1h_avg" = "carbon_monoxide",
+                "no2_pt1h_avg" = "nitrogen_dioxide",
+                "no_pt1h_avg" = "nitrogen_monoxide",
+                "o3_pt1h_avg" = "ozone",
+                "pm10_pt1h_avg" = "pm_10",
+                "pm25_pt1h_avg" = "pm_25",
+                "qbcpm25_pt1h_avg" = "black_carbon",
+                "so2_pt1h_avg" = "sulphur_dioxide",
+                "trsc_pt1h_avg" = "odorous_sulphur_compounds")
   rnm <- name_map[name_map %in% colnames(res)]
   rename(res, !!!rnm)
 }

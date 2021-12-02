@@ -1,8 +1,8 @@
-# -Tests for the function "fmi_download" (and helpers)
+# -Tests for the function "fmi_weather" (and helpers)
 library(tidyverse)
 library(lubridate)
 
-context("fmi_download")
+context("fmi_weather")
 test_that("mk_time_seq fails when end > start", {
   expect_error(mk_time_seq(today(), today() - days(1), TRUE))
 })
@@ -127,7 +127,7 @@ test_that("simplify_colnames seems to work as expected", {
 
 test_that("the entire function returns something sensible for yesterday", {
   yesterday <- today() - days(1)
-  result <- fmi_download(yesterday)
+  result <- fmi_weather(yesterday)
   expect_equal(slice(result, 0),
                tibble(date = as_date(character(0)),
                       rain = double(0),
@@ -136,5 +136,5 @@ test_that("the entire function returns something sensible for yesterday", {
 })
 
 test_that("report_errors passes the error to R", {
-  expect_error(fmi_download(today(), fmi_apikey = "fake_key"), regexp = "apikey")
+  expect_error(fmi_weather(today(), fmi_apikey = "fake_key"), regexp = "apikey")
 })

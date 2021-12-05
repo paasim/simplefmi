@@ -98,16 +98,16 @@ simplify_colnames <- function(res) {
                 "temp_ground" = "tg_pt12h_min",
                 "weather_code" = "wawa",
 
-                "aqindex_pt1h_avg" = "airquality",
-                "co_pt1h_avg" = "carbon_monoxide",
-                "no2_pt1h_avg" = "nitrogen_dioxide",
-                "no_pt1h_avg" = "nitrogen_monoxide",
-                "o3_pt1h_avg" = "ozone",
-                "pm10_pt1h_avg" = "pm_10",
-                "pm25_pt1h_avg" = "pm_25",
-                "qbcpm25_pt1h_avg" = "black_carbon",
-                "so2_pt1h_avg" = "sulphur_dioxide",
-                "trsc_pt1h_avg" = "odorous_sulphur_compounds")
+                "airquality" = "aqindex_pt1h_avg",
+                "carbon_monoxide" = "co_pt1h_avg",
+                "nitrogen_dioxide" = "no2_pt1h_avg",
+                "nitrogen_monoxide" = "no_pt1h_avg",
+                "ozone" = "o3_pt1h_avg",
+                "pm_10" = "pm10_pt1h_avg",
+                "pm_25" = "pm25_pt1h_avg",
+                "black_carbon" = "qbcpm25_pt1h_avg",
+                "sulphur_dioxide" = "so2_pt1h_avg",
+                "odorous_sulphur_compounds" = "trsc_pt1h_avg")
 
   rnm <- name_map[name_map %in% colnames(res)]
   rename(res, !!!rnm)

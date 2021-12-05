@@ -24,7 +24,7 @@ test_that("fmi_airquality returns something sensible for yesterday", {
   result <- fmi_airquality(yesterday)
   expect_equal(nrow(result), 1)
   tbl0 <- tibble(date = as_datetime(character(0)),
-                 aqindex_pt1h_avg = double(0))
+                 airquality = double(0))
   expect_equal(slice(result, 0), tbl0)
   expect_equal(result$date, yesterday)
 })

@@ -17,10 +17,13 @@ Usage
     library(simplefmi)
     library(lubridate) # for date-variables
 
-    # get yesterday's hourly rain and temperature data from kaisaniemi
     yesterday <- today() - days(1)
     yesterday_0 <- ymd_hms(stringr::str_c(yesterday, " 00:00:00"))
     yesterday_23 <- ymd_hms(stringr::str_c(yesterday, " 23:00:00"))
-    weather <- fmi_download(yesterday_0, yesterday_23, hourly = TRUE)
 
+    # get yesterday's hourly rain and temperature data from kaisaniemi
+    weather <- fmi_weather(yesterday_0, yesterday_23, hourly = TRUE)
+
+    # get yesterday's air quality index for mannerheimintie
+    airquality <- fmi_airquality(yesterday_0, yesterday_23)
 

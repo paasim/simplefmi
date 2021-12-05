@@ -1,8 +1,8 @@
-# -Tests for the function "fmi_download" (and helpers)
+# -Tests for the helper functions
 library(tidyverse)
 library(lubridate)
 
-context("fmi_download")
+context("helpers")
 test_that("mk_time_seq fails when end > start", {
   expect_error(mk_time_seq(today(), today() - days(1), TRUE))
 })
@@ -33,9 +33,9 @@ test_that("construct_query works for a simple case with apikey", {
   start <- today()
   end <- start
   station_id <- "test_id"
-  hourly <- FALSE
+  type <- "weather-daily"
   params <- "test_params"
-  query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
+  query <- construct_query(fmi_apikey, start, end, station_id, params, type)
 
   query_expect <- str_c(
     "http://data.fmi.fi/fmi-apikey/test_ak/wfs?request=getFeature",
@@ -45,21 +45,30 @@ test_that("construct_query works for a simple case with apikey", {
   expect_equal(query, query_expect)
 })
 
-test_that("construct_query works for a simple case without apikey", {
+test_that("construct_query works for two simple cases without apikey", {
   fmi_apikey <- NA_character_
   start <- today()
   end <- start
   station_id <- "test_id"
-  hourly <- FALSE
+  type1 <- "weather-hourly"
+  type2 <- "airquality"
   params <- "test_params"
-  query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
+  query1 <- construct_query(fmi_apikey, start, end, station_id, params, type1)
+  query2 <- construct_query(fmi_apikey, start, end, station_id, params, type2)
 
-  query_expect <- str_c(
+  query_expect1 <- str_c(
     "http://opendata.fmi.fi/wfs?request=getFeature",
-    "&storedquery_id=fmi::observations::weather::daily::simple",
-    "&timestep=1440&parameters=test_params&fmisid=test_id",
+    "&storedquery_id=fmi::observations::weather::simple",
+    "&timestep=60&parameters=test_params&fmisid=test_id",
     "&starttime=", fmi_date_form(start), "&endtime=", fmi_date_form(end))
-  expect_equal(query, query_expect)
+  query_expect2 <- str_c(
+    "http://opendata.fmi.fi/wfs?request=getFeature",
+    "&storedquery_id=urban::observations::airquality::hourly::simple",
+    "&timestep=60&parameters=test_params&fmisid=test_id",
+    "&starttime=", fmi_date_form(start), "&endtime=", fmi_date_form(end))
+
+  expect_equal(query1, query_expect1)
+  expect_equal(query2, query_expect2)
 })
 
 test_that("construct_query works for multi-req daily data", {
@@ -67,10 +76,10 @@ test_that("construct_query works for multi-req daily data", {
   start <- today() - years(3)
   end <- today() - days(4)
   station_id <- "test"
-  hourly <- FALSE
+  type <- "weather-daily"
   params <- "test"
 
-  query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
+  query <- construct_query(fmi_apikey, start, end, station_id, params, type)
   expect_length(query, 3)
 
   start_exp <- str_c("&starttime=", fmi_date_form(start + years(0:2)))
@@ -89,10 +98,10 @@ test_that("construct_query works for multi-req hourly data", {
   start <- ymd_hms("2019-02-10 00:00:00")
   end <- ymd_hms("2019-03-02T20:00:00Z")
   station_id <- "test"
-  hourly <- TRUE
+  type <- "weather-hourly"
   params <- "test"
 
-  query <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
+  query <- construct_query(fmi_apikey, start, end, station_id, params, type)
   expect_length(query, 3)
 
   start_exp <- str_c("&starttime=", fmi_date_form(start + weeks(0:2)))
@@ -110,7 +119,7 @@ test_that("process_content seems to work as expected", {
   yesterday <- today() - days(1)
   start <- str_c(yesterday, " 00:00:00")
   end <- str_c(yesterday, " 23:00:00")
-  query <- construct_query(NA_character_, start, end, "100971", "t2m,r_1h", TRUE)
+  query <- construct_query(NA_character_, start, end, "100971", "t2m,r_1h", "weather-hourly")
   res <- map(query, GET)
   df1 <- map_df(res, process_content)
   expect_true(is_tibble(df1))
@@ -123,18 +132,4 @@ test_that("simplify_colnames seems to work as expected", {
   tb1 <- simplify_colnames(tibble(tday = 1, vis = 2))
   tb2 <- tibble(temp = 1, visibility = 2)
   expect_identical(tb1, tb2)
-})
-
-test_that("the entire function returns something sensible for yesterday", {
-  yesterday <- today() - days(1)
-  result <- fmi_download(yesterday)
-  expect_equal(slice(result, 0),
-               tibble(date = as_date(character(0)),
-                      rain = double(0),
-                      temp = double(0)))
-  expect_equal(result$date, yesterday)
-})
-
-test_that("report_errors passes the error to R", {
-  expect_error(fmi_download(today(), fmi_apikey = "fake_key"), regexp = "apikey")
 })

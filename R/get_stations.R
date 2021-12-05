@@ -1,9 +1,11 @@
 #' get_stations
 #'
-#' Download the available weather stations from
-#'  <http://en.ilmatieteenlaitos.fi/open-data-manual>.
+#' Download the available stations from
+#'  <http://en.ilmatieteenlaitos.fi/open-data-manual>. See especially the
+#' variable `groups` which specifies wheter the station provides weather or
+#' urban air quality data.
 #'
-#' @return A tibble with the station name, id, latitude and longitude.
+#' @return A tibble with the station name, id, and other information.
 #'
 #' @export
 #'

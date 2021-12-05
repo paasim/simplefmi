@@ -59,7 +59,8 @@ fmi_weather <- function(start,
                         verbose = FALSE,
                         fmi_apikey = NA_character_) {
 
-  queries <- construct_query(fmi_apikey, start, end, station_id, params, hourly)
+  queries <- construct_query(fmi_apikey, start, end, station_id, params,
+                             if (hourly) "weather-hourly" else "weather-daily")
   if (length(queries) >= 30) {
     warn <- glue("Note that the request is split into ",
                  "{length(queries)} parts due to fmi api limits.")
@@ -109,10 +110,9 @@ fmi_weather <- function(start,
 #' @param start Start time as a POSIXt-object obtained with e.g.
 #'  lubridate::as_datetime().
 #' @param end End time as a POSIXt-object. Defaults to `start`.
-#' @param station_id The weather station id. Defaults to `104105`.
-#'  (Töölöntulli air quality station). A list of the available stations can be
-#'  downloaded with the [get_stations()]-function, though it might not really
-#'  pinpoint which stations have valid air quality data.
+#' @param station_id The weather station id. Defaults to `100742`.
+#'  (Helsinki Mannerheimintie air quality station). A list of the available
+#'  stations can be downloaded with the [get_stations()]-function.
 #' @param params Query parameters, a comma separated string, such as
 #' `"tday,rrday"`. For more options, see Details.
 #' @param simplify_names If `TRUE`, variable names are simplified (eg. `aqindex_pt1h_avg` is
@@ -123,18 +123,17 @@ fmi_weather <- function(start,
 #'
 #' @return A tibble with time in the first
 #'  column and the variables specified in `params` in the other columns.
-#' @encoding UTF-8
 #'
 #' @export
 fmi_airquality <- function(start,
                            end = start,
-                           station_id = "100971",
+                           station_id = "100742",
                            params = "aqindex_pt1h_avg",
                            simplify_names = TRUE,
                            verbose = FALSE,
                            fmi_apikey = NA_character_) {
 
-  queries <- construct_query(fmi_apikey, start, end, station_id, params, TRUE, "airquality")
+  queries <- construct_query(fmi_apikey, start, end, station_id, params, "airquality")
   if (length(queries) >= 30) {
     warn <- glue("Note that the request is split into ",
                  "{length(queries)} parts due to fmi api limits.")

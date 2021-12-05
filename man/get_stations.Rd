@@ -7,9 +7,11 @@
 get_stations()
 }
 \value{
-A tibble with the station name, id, latitude and longitude.
+A tibble with the station name, id, and other information.
 }
 \description{
-Download the available weather stations from
-\url{http://en.ilmatieteenlaitos.fi/open-data-manual}.
+Download the available stations from
+\url{http://en.ilmatieteenlaitos.fi/open-data-manual}. See especially the
+variable \code{groups} which specifies wheter the station provides weather or
+urban air quality data.
 }

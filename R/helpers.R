@@ -1,28 +1,26 @@
 #fmi Construct the query needed for downloading the data
-construct_query <- function(apikey, start, end, station_id, params, hourly, type = "weather") {
+construct_query <- function(apikey, start, end, station_id, params, type) {
 
-  if (hourly & type == "weather") {
+  if (type == "weather-daily") {
+    query_id <- "fmi::observations::weather::daily::simple"
+    timestep <- 1440
+    # possible values of params: rrday, tday, snow, tmin, tmax, tg_pt13h_min
+  } else if (type == "weather-hourly") {
     query_id <- "fmi::observations::weather::simple"
     timestep <- 60
     # possible values  t2m, ws_10min, wg_10min, wd_10min, n_man,
     # of params:       rh, td, r_1h, ri_10min, snow_aws, p_sea, vis, wawa
-  } else if (type == "weather") {
-    query_id <- "fmi::observations::weather::daily::simple"
-    timestep <- 1440
-    # possible values of params: rrday, tday, snow, tmin, tmax, tg_pt13h_min
-  } else if (hourly & type == "airquality") {
+  } else if (type == "airquality") {
     query_id <- "urban::observations::airquality::hourly::simple"
     timestep <- 60
     # possible values  so2_pt1h_avg, no_pt1h_avg, no2_pt1h_avg, o3_pt1h_avg,
     # of params:       trsc_pt1h_avg, co_pt1h_avg, pm10_pt1h_avg, pm25_pt1h_avg,
     #                  qbcpm25_pt1h_avg, aqindex_pt1h_avg
-  } else if (type == "airquality") {
-    stop("only hourly air quality data available.")
   } else {
     stop(glue("unknown type '{type}'"))
   }
 
-  times <- mk_time_seq(start, end, hourly) %>% map(fmi_date_form)
+  times <- mk_time_seq(start, end, timestep == 60) %>% map(fmi_date_form)
 
   url <- if (is.na(apikey)) {
     "http://opendata.fmi.fi"
@@ -41,6 +39,7 @@ construct_query <- function(apikey, start, end, station_id, params, hourly, type
 }
 
 mk_time_seq <- function(start, end, hourly) {
+
   if (hourly) {
     start <- as_datetime(start) %>% as.POSIXct()
     end <- as_datetime(end) %>% as.POSIXct()
@@ -52,11 +51,13 @@ mk_time_seq <- function(start, end, hourly) {
     by <- "year"
     diff <- days(1)
   }
+
   if (end < start) stop("start date bigger than end date.")
   if (start == end) return(tibble(start = start, end = end))
   end_m1 <- end - diff
   starts <- seq(start, end_m1, by)
   ends <- c(starts[-1] - diff, end)
+
   tibble(start = starts, end = ends)
 }
 
@@ -76,6 +77,7 @@ process_content <- function(res) {
 }
 
 simplify_colnames <- function(res) {
+
   name_map <- c("temp" = "t2m",
                 "cloud_cover" = "TotalCloudCover",
                 "cloud_cover" = "n_man",
@@ -106,6 +108,7 @@ simplify_colnames <- function(res) {
                 "qbcpm25_pt1h_avg" = "black_carbon",
                 "so2_pt1h_avg" = "sulphur_dioxide",
                 "trsc_pt1h_avg" = "odorous_sulphur_compounds")
+
   rnm <- name_map[name_map %in% colnames(res)]
   rename(res, !!!rnm)
 }
@@ -121,6 +124,7 @@ report_errors <- function(res_list) {
 }
 
 .onAttach <- function(...) {
+
   ver <- utils::packageVersion("simplefmi")
   packageStartupMessage("This is simplefmi version ", ver)
 }

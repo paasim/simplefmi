@@ -69,7 +69,7 @@ fmi_weather <- function(start,
 
   get_slowly <- slowly(~GET(.x))
   get_verbosely <- function(query, n) {
-    glue("Executing query {n}/{length(queries)}") %>% print()
+    glue("Executing query {n}/{length(queries)}") |> print()
     get_slowly(query)
   }
   res <- if (verbose) imap(queries, get_verbosely) else map(queries, get_slowly)
@@ -142,7 +142,7 @@ fmi_airquality <- function(start,
 
   get_slowly <- slowly(~GET(.x))
   get_verbosely <- function(query, n) {
-    glue("Executing query {n}/{length(queries)}") %>% print()
+    glue("Executing query {n}/{length(queries)}") |> print()
     get_slowly(query)
   }
   res <- if (verbose) imap(queries, get_verbosely) else map(queries, get_slowly)

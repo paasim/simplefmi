@@ -20,7 +20,7 @@ construct_query <- function(apikey, start, end, station_id, params, type) {
     stop(glue("unknown type '{type}'"))
   }
 
-  times <- mk_time_seq(start, end, timestep == 60) %>% map(fmi_date_form)
+  times <- mk_time_seq(start, end, timestep == 60) |> map(fmi_date_form)
 
   url <- if (is.na(apikey)) {
     "http://opendata.fmi.fi"
@@ -41,8 +41,8 @@ construct_query <- function(apikey, start, end, station_id, params, type) {
 mk_time_seq <- function(start, end, hourly) {
 
   if (hourly) {
-    start <- as_datetime(start) %>% as.POSIXct()
-    end <- as_datetime(end) %>% as.POSIXct()
+    start <- as_datetime(start) |> as.POSIXct()
+    end <- as_datetime(end) |> as.POSIXct()
     by <- "week"
     diff <- hours(1)
   } else {
@@ -65,14 +65,14 @@ fmi_date_form <- function(d) format(d, "%Y-%m-%dT%H:%M:%SZ")
 
 process_content <- function(res) {
 
-  nodes <- content(res, "text", "text/xml", "UTF-8") %>%
-    read_xml() %>%
+  nodes <- content(res, "text", "text/xml", "UTF-8") |>
+    read_xml() |>
     xml_find_all("./wfs:member/BsWfs:BsWfsElement")
 
-  get <- function(x) xml_find_all(nodes, str_c("./BsWfs:", x)) %>% xml_text()
-  tibble(date = get("Time") %>% str_replace("T", " ") %>% as_datetime(),
+  get <- function(x) xml_find_all(nodes, str_c("./BsWfs:", x)) |> xml_text()
+  tibble(date = get("Time") |> str_replace("T", " ") |> as_datetime(),
          key = get("ParameterName"),
-         value = get("ParameterValue") %>% parse_number(c("", "NA", "NaN"))) %>%
+         value = get("ParameterValue") |> parse_number(c("", "NA", "NaN"))) |>
     spread("key", "value")
 }
 
@@ -110,7 +110,7 @@ simplify_colnames <- function(res) {
                 "odorous_sulphur_compounds" = "trsc_pt1h_avg")
 
   rnm <- name_map[name_map %in% colnames(res)]
-  rename(res, !!!rnm)
+  rename(res, all_of(rnm))
 }
 
 report_errors <- function(res_list) {
@@ -118,7 +118,7 @@ report_errors <- function(res_list) {
   errors <- keep(res_list, http_error)
   if (length(errors) > 0L) {
     str_c("\nQuery returned with error(s), see the first one below:\n",
-          content(errors[[1]], "text", "text/xml", "UTF-8")) %>%
+          content(errors[[1]], "text", "text/xml", "UTF-8")) |>
       stop(call. = FALSE)
   }
 }

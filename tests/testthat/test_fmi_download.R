@@ -29,3 +29,15 @@ test_that("fmi_airquality returns something sensible for yesterday", {
   expect_equal(result$date, yesterday)
 })
 
+
+context("fmi_radiation")
+test_that("fmi_radiation returns something sensible for yesterday", {
+  yesterday <- floor_date(now("UTC"), "days") - days(1)
+  result <- fmi_radiation(yesterday)
+  expect_equal(nrow(result), 1)
+  tbl0 <- tibble(date = as_datetime(character(0)),
+                 diffuse = double(0), direct = double(0))
+  expect_equal(slice(result, 0), tbl0)
+  expect_equal(result$date, yesterday)
+})
+

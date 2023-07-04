@@ -25,7 +25,7 @@ lubridate::as_datetime().}
 stations can be downloaded with the \code{\link[=get_stations]{get_stations()}}-function.}
 
 \item{params}{Query parameters, a comma separated string, such as
-\code{"tday,rrday"}. For more options, see Details.}
+\code{"pm10_pt1h_avg,pm25_pt1h_avg"}. For more options, see Details.}
 
 \item{simplify_names}{If \code{TRUE}, variable names are simplified (eg. \code{aqindex_pt1h_avg} is
 converted to \code{airquality}).}
@@ -40,9 +40,9 @@ A tibble with time in the first
 column and the variables specified in \code{params} in the other columns.
 }
 \description{
-Download data from the fmi (urban) airquality API. If the request is larger than the
-api allows, it is split into multiple parts. If this results to more than
-30 queries, a warning message is printed.
+Download data from the fmi (urban) airquality API. If the request is larger
+than the api allows, it is split into multiple parts. If this results to more
+than 30 queries, a warning message is printed.
 }
 \details{
 The available variables are listed below, more information can be found from

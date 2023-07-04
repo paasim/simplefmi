@@ -27,3 +27,6 @@ Usage
     # get yesterday's air quality index for mannerheimintie
     airquality <- fmi_airquality(yesterday_0, yesterday_23)
 
+    # get yesterday's direct and diffuse radiation
+    radiatio <- fmi_radiation(yesterday_0, yesterday_23)
+

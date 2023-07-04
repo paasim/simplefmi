@@ -16,6 +16,11 @@ construct_query <- function(apikey, start, end, station_id, params, type) {
     # possible values  so2_pt1h_avg, no_pt1h_avg, no2_pt1h_avg, o3_pt1h_avg,
     # of params:       trsc_pt1h_avg, co_pt1h_avg, pm10_pt1h_avg, pm25_pt1h_avg,
     #                  qbcpm25_pt1h_avg, aqindex_pt1h_avg
+  } else if (type == "radiation") {
+    query_id <- "fmi::observations::radiation::simple"
+    timestep <- 60
+    # possible values  lwin_1min, lwout_1min, glob_1min, dir_1min, refl_1min,
+    # of params:       sund_1min, diff_1min, net_1min, uvb_u
   } else {
     stop(glue("unknown type '{type}'"))
   }
@@ -78,36 +83,48 @@ process_content <- function(res) {
 
 simplify_colnames <- function(res) {
 
-  name_map <- c("temp" = "t2m",
-                "cloud_cover" = "TotalCloudCover",
-                "cloud_cover" = "n_man",
-                "wind_speed" = "ws_10min",
-                "wind_gust" = "wg_10min",
-                "wind_dir" = "wd_10min",
-                "humidity" = "rh",
-                "dew_point" = "td",
-                "rain" = "r_1h",
-                "rain_intensity" = "ri_10min",
-                "snow" = "snow_aws",
-                "air_pressure" = "p_sea",
-                "visibility" = "vis",
-                "rain" = "rrday",
-                "temp" = "tday",
-                "temp_min" = "tmin",
-                "temp_max" = "tmax",
-                "temp_ground" = "tg_pt12h_min",
-                "weather_code" = "wawa",
+  name_map <- c(
+    "temp" = "t2m",
+    "cloud_cover" = "TotalCloudCover",
+    "cloud_cover" = "n_man",
+    "wind_speed" = "ws_10min",
+    "wind_gust" = "wg_10min",
+    "wind_dir" = "wd_10min",
+    "humidity" = "rh",
+    "dew_point" = "td",
+    "rain" = "r_1h",
+    "rain_intensity" = "ri_10min",
+    "snow" = "snow_aws",
+    "air_pressure" = "p_sea",
+    "visibility" = "vis",
+    "rain" = "rrday",
+    "temp" = "tday",
+    "temp_min" = "tmin",
+    "temp_max" = "tmax",
+    "temp_ground" = "tg_pt12h_min",
+    "weather_code" = "wawa",
 
-                "airquality" = "aqindex_pt1h_avg",
-                "carbon_monoxide" = "co_pt1h_avg",
-                "nitrogen_dioxide" = "no2_pt1h_avg",
-                "nitrogen_monoxide" = "no_pt1h_avg",
-                "ozone" = "o3_pt1h_avg",
-                "pm_10" = "pm10_pt1h_avg",
-                "pm_25" = "pm25_pt1h_avg",
-                "black_carbon" = "qbcpm25_pt1h_avg",
-                "sulphur_dioxide" = "so2_pt1h_avg",
-                "odorous_sulphur_compounds" = "trsc_pt1h_avg")
+    "airquality" = "aqindex_pt1h_avg",
+    "carbon_monoxide" = "co_pt1h_avg",
+    "nitrogen_dioxide" = "no2_pt1h_avg",
+    "nitrogen_monoxide" = "no_pt1h_avg",
+    "ozone" = "o3_pt1h_avg",
+    "pm_10" = "pm10_pt1h_avg",
+    "pm_25" = "pm25_pt1h_avg",
+    "black_carbon" = "qbcpm25_pt1h_avg",
+    "sulphur_dioxide" = "so2_pt1h_avg",
+    "odorous_sulphur_compounds" = "trsc_pt1h_avg",
+
+    "longwave" = "lwin_1min",
+    "outgoing_longwave" = "lwout_1min",
+    "global" = "glob_1min",
+    "direct" = "dir_1min",
+    "reflected" = "refl_1min",
+    "sunshine" = "sund_1min",
+    "diffuse" = "diff_1min",
+    "balance" = "net_1min",
+    "uv_irradiance" = "uvb_u"
+  )
 
   rnm <- name_map[name_map %in% colnames(res)]
   rename(res, all_of(rnm))

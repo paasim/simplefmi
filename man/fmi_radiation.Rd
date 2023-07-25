@@ -27,8 +27,8 @@ stations can be downloaded with the \code{\link[=get_stations]{get_stations()}}-
 \item{params}{Query parameters, a comma separated string, such as
 \code{"dir_1min,diff_1min"}. For more options, see Details.}
 
-\item{simplify_names}{If \code{TRUE}, variable names are simplified (eg. \code{GLOB_1MIN} is
-converted to \code{global_radiation}).}
+\item{simplify_names}{If \code{TRUE}, variable names are simplified (eg.
+\code{GLOB_1MIN} is converted to \code{global_radiation}).}
 
 \item{verbose}{If \code{TRUE}, prints the progress. Defaults to \code{FALSE}.}
 
@@ -41,7 +41,10 @@ column and the variables specified in \code{params} in the other columns.
 }
 \description{
 Download radiation data from the fmi radiation API. If the request is larger
-than 30 queries, a warning message is printed. \emph{Note}, this might be for the first minute of the hour as it works currently, rather than some kind of averages!
+than the api allows, it is split into multiple parts. If this results to more
+than 30 queries, a warning message is printed. \emph{Note}, this might be for
+the first minute of the hour as it works currently, rather than some kind
+of averages!
 }
 \details{
 The available variables are listed below, more information can be found from

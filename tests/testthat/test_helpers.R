@@ -1,6 +1,7 @@
 # -Tests for the helper functions
 library(tidyverse)
 library(lubridate)
+library(httr)
 
 context("helpers")
 test_that("mk_time_seq fails when end > start", {
@@ -128,8 +129,10 @@ test_that("process_content seems to work as expected", {
   expect_equal(median(df1$date), ymd_hms(str_c(yesterday, "11:30:00 UTC")))
 })
 
-test_that("simplify_colnames seems to work as expected", {
-  tb1 <- simplify_colnames(tibble(tday = 1, vis = 2))
+test_that("name_map seems to work as expected", {
+  tb1 <- tibble(tday = 1, vis = 2)
   tb2 <- tibble(temp = 1, visibility = 2)
+  rnm <- name_map(colnames(tb1))
+  tb1 <- dplyr::rename(tb1, dplyr::all_of(rnm))
   expect_identical(tb1, tb2)
 })

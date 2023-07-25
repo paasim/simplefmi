@@ -27,8 +27,8 @@ stations can be downloaded with the \code{\link[=get_stations]{get_stations()}}-
 \item{params}{Query parameters, a comma separated string, such as
 \code{"pm10_pt1h_avg,pm25_pt1h_avg"}. For more options, see Details.}
 
-\item{simplify_names}{If \code{TRUE}, variable names are simplified (eg. \code{aqindex_pt1h_avg} is
-converted to \code{airquality}).}
+\item{simplify_names}{If \code{TRUE}, variable names are simplified (eg.
+\code{aqindex_pt1h_avg} is converted to \code{airquality}).}
 
 \item{verbose}{If \code{TRUE}, prints the progress. Defaults to \code{FALSE}.}
 

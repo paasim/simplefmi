@@ -50,40 +50,24 @@
 #'  column and the variables specified in `params` in the other columns.
 #'
 #' @export
-fmi_weather <- function(
-  start,
-  end = start,
-  station_id = "100971",
-  params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
-  hourly = FALSE,
-  simplify_names = TRUE,
-  verbose = FALSE,
-  fmi_apikey = NA_character_
-) {
-  queries <- construct_query(fmi_apikey, start, end, station_id, params,
-                             if (hourly) "weather-hourly" else "weather-daily")
-  if (length(queries) >= 30) {
-    warn <- glue("Note that the request is split into ",
-                 "{length(queries)} parts due to fmi api limits.")
-    warning(warn, call. = FALSE, immediate. = TRUE)
-  }
-
-  get_slowly <- slowly(~GET(.x))
-  get_verbosely <- function(query, n) {
-    glue("Executing query {n}/{length(queries)}") |> print()
-    get_slowly(query)
-  }
-  res <- if (verbose) imap(queries, get_verbosely) else map(queries, get_slowly)
-  report_errors(res)
-
-  res_content <- map_df(res, process_content)
+fmi_weather <- function(start,
+                        end = start,
+                        station_id = "100971",
+                        params = ifelse(hourly, "t2m,r_1h", "tday,rrday"),
+                        hourly = FALSE,
+                        simplify_names = TRUE,
+                        verbose = FALSE,
+                        fmi_apikey = NA_character_) {
+  res <- construct_query(
+    fmi_apikey, start, end, station_id, params,
+    if (hourly) "weather-hourly" else "weather-daily"
+  ) |>
+    fmi_get(simplify_names, verbose)
 
   # remove time information
-  if (!hourly) res_content$date <- as_date(res_content$date)
+  if (!hourly) res$date <- lubridate::as_date(res$date)
 
-  if (simplify_names) res_content <- simplify_colnames(res_content)
-
-  res_content
+  res
 }
 
 
@@ -116,8 +100,8 @@ fmi_weather <- function(
 #'  stations can be downloaded with the [get_stations()]-function.
 #' @param params Query parameters, a comma separated string, such as
 #' `"pm10_pt1h_avg,pm25_pt1h_avg"`. For more options, see Details.
-#' @param simplify_names If `TRUE`, variable names are simplified (eg. `aqindex_pt1h_avg` is
-#' converted to `airquality`).
+#' @param simplify_names If `TRUE`, variable names are simplified (eg.
+#' `aqindex_pt1h_avg` is converted to `airquality`).
 #' @param verbose If `TRUE`, prints the progress. Defaults to `FALSE`.
 #' @param fmi_apikey An optional fmi-apikey.
 #'  See <http://en.ilmatieteenlaitos.fi/open-data-manual>.
@@ -126,43 +110,27 @@ fmi_weather <- function(
 #'  column and the variables specified in `params` in the other columns.
 #'
 #' @export
-fmi_airquality <- function(
-  start,
-  end = start,
-  station_id = "100742",
-  params = "aqindex_pt1h_avg",
-  simplify_names = TRUE,
-  verbose = FALSE,
-  fmi_apikey = NA_character_
-) {
-  queries <- construct_query(fmi_apikey, start, end, station_id, params, "airquality")
-  if (length(queries) >= 30) {
-    warn <- glue("Note that the request is split into ",
-                 "{length(queries)} parts due to fmi api limits.")
-    warning(warn, call. = FALSE, immediate. = TRUE)
-  }
-
-  get_slowly <- slowly(~GET(.x))
-  get_verbosely <- function(query, n) {
-    glue("Executing query {n}/{length(queries)}") |> print()
-    get_slowly(query)
-  }
-  res <- if (verbose) imap(queries, get_verbosely) else map(queries, get_slowly)
-  report_errors(res)
-
-  res_content <- map_df(res, process_content)
-
-  if (simplify_names) res_content <- simplify_colnames(res_content)
-
-  res_content
+fmi_airquality <- function(start,
+                           end = start,
+                           station_id = "100742",
+                           params = "aqindex_pt1h_avg",
+                           simplify_names = TRUE,
+                           verbose = FALSE,
+                           fmi_apikey = NA_character_) {
+  construct_query(
+    fmi_apikey, start, end, station_id, params, "airquality"
+  ) |>
+    fmi_get(simplify_names, verbose)
 }
 
 
 #' fmi_radiation
 #'
 #' Download radiation data from the fmi radiation API. If the request is larger
-#" than the api allows, it is split into multiple parts. If this results to more
-#' than 30 queries, a warning message is printed. *Note*, this might be for the first minute of the hour as it works currently, rather than some kind of averages!
+#' than the api allows, it is split into multiple parts. If this results to more
+#' than 30 queries, a warning message is printed. *Note*, this might be for
+#' the first minute of the hour as it works currently, rather than some kind
+#' of averages!
 #'
 #' The available variables are listed below, more information can be found from
 #' <https://en.ilmatieteenlaitos.fi/open-data-manual>.
@@ -186,8 +154,8 @@ fmi_airquality <- function(
 #'  stations can be downloaded with the [get_stations()]-function.
 #' @param params Query parameters, a comma separated string, such as
 #' `"dir_1min,diff_1min"`. For more options, see Details.
-#' @param simplify_names If `TRUE`, variable names are simplified (eg. `GLOB_1MIN` is
-#' converted to `global_radiation`).
+#' @param simplify_names If `TRUE`, variable names are simplified (eg.
+#' `GLOB_1MIN` is converted to `global_radiation`).
 #' @param verbose If `TRUE`, prints the progress. Defaults to `FALSE`.
 #' @param fmi_apikey An optional fmi-apikey.
 #'  See <http://en.ilmatieteenlaitos.fi/open-data-manual>.
@@ -196,33 +164,15 @@ fmi_airquality <- function(
 #'  column and the variables specified in `params` in the other columns.
 #'
 #' @export
-fmi_radiation <- function(
-  start,
-  end = start,
-  station_id = "101004",
-  params = "dir_1min,diff_1min",
-  simplify_names = TRUE,
-  verbose = FALSE,
-  fmi_apikey = NA_character_
-) {
-  queries <- construct_query(fmi_apikey, start, end, station_id, params, "radiation")
-  if (length(queries) >= 30) {
-    warn <- glue("Note that the request is split into ",
-                 "{length(queries)} parts due to fmi api limits.")
-    warning(warn, call. = FALSE, immediate. = TRUE)
-  }
-
-  get_slowly <- slowly(~GET(.x))
-  get_verbosely <- function(query, n) {
-    glue("Executing query {n}/{length(queries)}") |> print()
-    get_slowly(query)
-  }
-  res <- if (verbose) imap(queries, get_verbosely) else map(queries, get_slowly)
-  report_errors(res)
-
-  res_content <- map_df(res, process_content)
-
-  if (simplify_names) res_content <- simplify_colnames(res_content)
-
-  res_content
+fmi_radiation <- function(start,
+                          end = start,
+                          station_id = "101004",
+                          params = "dir_1min,diff_1min",
+                          simplify_names = TRUE,
+                          verbose = FALSE,
+                          fmi_apikey = NA_character_) {
+  construct_query(
+    fmi_apikey, start, end, station_id, params, "radiation"
+  ) |>
+    fmi_get(simplify_names, verbose)
 }
